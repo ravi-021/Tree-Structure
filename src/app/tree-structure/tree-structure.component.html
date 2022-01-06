@@ -1,0 +1,80 @@
+<header class="header">
+  <div class="title">
+    <h4>Folder structure</h4>
+  </div>
+</header>
+
+<div class="root-btn-wrapper">
+  <button class="root-btn" (click)="addRootFolder()">add folder to root</button>
+</div>
+
+<div class="folder-structure">
+  <ul class="node-list main-list">
+    <ng-container
+      *ngTemplateOutlet="listTemplate; context: { list: list }"
+    ></ng-container>
+  </ul>
+
+  <ng-template #listTemplate let-list="list">
+    <li
+      *ngFor="let item of list; let i = index"
+      [ngClass]="{ file: item.type === 'file', folder: item.type === 'folder' }"
+    >
+      <div class="node-name" *ngIf="!item.isEditable">
+        <span (click)="onClickNode(item)">{{ item.name }}</span>
+        <i
+          class="fa fa-plus-circle"
+          (click)="insertTreeNode(item)"
+          role="button"
+          aria-label="add child node"
+          *ngIf="item.type === 'folder'"
+        ></i>
+        <i
+          role="button"
+          aria-label="remove current node"
+          class="fa fa-trash"
+          (click)="removeTreeNode(list, item.id)"
+        ></i>
+      </div>
+      <span
+        [ngClass]="{
+          'display-file-icon': item.type === 'file',
+          'display-folder-icon': item.type === 'folder'
+        }"
+      ></span>
+
+      <ng-container *ngIf="item.isEditable">
+        <div class="node-name-edit">
+          <input type="text" value="{{ item.name }}" #nameInput />
+          <i
+            class="fa fa-check-circle"
+            role="button"
+            aria-label="add node"
+            (click)="updateTreeNode(item, nameInput.value)"
+          ></i>
+          <i
+            class="fa fa-times-circle"
+            role="button"
+            aria-label="remove node"
+            (click)="updateTreeNode(item, item.name)"
+          ></i>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="item.type === 'unset'">
+        <button (click)="addFileFolderTreeNode(item, 'file')">file</button>
+        <button (click)="addFileFolderTreeNode(item, 'folder')">folder</button>
+      </ng-container>
+
+      <ul *ngIf="item.children.length > 0" class="node-list child-ul">
+        <ng-container
+          *ngTemplateOutlet="
+          listTemplate;
+            context: { list: item.children }
+          "
+        >
+        </ng-container>
+      </ul>
+    </li>
+  </ng-template>
+</div>
