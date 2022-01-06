@@ -4,75 +4,101 @@ import { NodeModel } from '../models/tree-structure.model';
 @Component({
   selector: 'app-tree-structure',
   templateUrl: './tree-structure.component.html',
-  styleUrls: ['./tree-structure.component.scss']
+  styleUrls: ['./tree-structure.component.scss'],
 })
 export class TreeStructureComponent implements OnInit {
-  public list: NodeModel[] = [];
-  
+  public treeList: NodeModel[] = [];
 
   constructor() {}
 
   ngOnInit() {}
 
-  addRootFolder() {
-    this.list.push({
+  /**
+   * On click of insertRootNode create new node and push in treeList array
+   */
+
+  insertRootNode() {
+    this.treeList.push({
       name: '',
       type: 'folder',
       children: [],
       id: this.generateUniqueId(),
     });
-    this.list[this.list.length - 1]['isEditable'] = true;
+    this.treeList[this.treeList.length - 1]['isEditable'] = true;
   }
 
-
-  onClickNode(item: any) {
-    item.isEditable = true;
+  /**
+   * On click of node, input tag will be activated
+   * @param node : node object
+   */
+  editNode(node: any) {
+    node.isEditable = true;
   }
 
-
-   updateTreeNode(item: any, name: any) {
-    if (name) {
-      item.name = name;
-      item.isEditable = false;
-    } else {
-      this.removeTreeNode(this.list, item.id);
-    }
+  /**
+   * On click of file or folder button, correct node type will be set
+   * @param node : node object
+   * @param type : 'file': 'folder'
+   */
+  addFileOrFolderToTreeNode(node: any, type: string) {
+    node.type = type;
+    node.name = '';
+    node.isEditable = true;
+    (node.children = []), (node.id = this.generateUniqueId());
   }
 
+  /**
+   * On click of plus icon, new empty node is added as child node
+   * @param node : node
+   */
 
-  removeTreeNode(listArray: any, nodeId: any) {
-    for (const [i, e] of listArray.entries()) {
-      if (e.id === nodeId) {
-        listArray.splice(i, 1);
-        continue;
-      }
-      if (e.children) {
-        this.removeTreeNode(e.children, nodeId);
-      }
-    }
-    return listArray;
-  }
-
-
-  insertTreeNode(item: any) {
-    item.children.push({
+  insertNodeIntoTree(node: any) {
+    node.children.push({
       name: '',
       type: 'unset',
       children: [],
     });
   }
 
-
-  addFileFolderTreeNode(item: any, type: string) {
-    item.type = type;
-    item.name = '';
-    item.isEditable = true;
-    (item.children = []), (item.id = this.generateUniqueId());
+  /**
+   * To update the name of tree node with new name, if name will be empty then that node will be removed
+   * @param node : node object
+   * @param name : current value of input tag
+   */
+  updateTreeNodeName(node: any, name: any) {
+    if (name) {
+      node.name = name;
+      node.isEditable = false;
+    } else {
+      this.removeNodeFromTree(this.treeList, node.id);
+    }
   }
 
+  /**
+   * To remove any particular node from tree
+   * @param treeListArray : Tree List array
+   * @param nodeId : Unique id of particular node
+   * @returns
+   */
+  removeNodeFromTree(treeListArray: any, nodeId: any) {
+    console.log('list array', JSON.parse(JSON.stringify(treeListArray)));
+    for (const [i, e] of treeListArray.entries()) {
+      if (e.id === nodeId) {
+        treeListArray.splice(i, 1);
+        continue;
+      }
+      if (e.children) {
+        this.removeNodeFromTree(e.children, nodeId);
+      }
+    }
+    return treeListArray;
+  }
 
+  /**
+   * To create unique id for each node
+   * @returns : unique id
+   */
   generateUniqueId() {
-    return Date.now().toString(20) + Math.random().toString(20)
+    return '_' + Math.random().toString(36).substr(2, 9);
   }
-
 }
