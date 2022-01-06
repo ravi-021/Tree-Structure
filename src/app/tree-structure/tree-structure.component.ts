@@ -14,7 +14,7 @@ export class TreeStructureComponent implements OnInit {
   ngOnInit() {}
 
   /**
-   * On click of insertRootNode create new node and push in treeList array
+   * On click of add root level node, new node will be created and pushed in treeList array
    */
 
   insertRootNode() {
@@ -48,7 +48,7 @@ export class TreeStructureComponent implements OnInit {
   }
 
   /**
-   * On click of plus icon, new empty node is added as child node
+   * On click of plus icon, new empty node will be added as child node
    * @param node : node
    */
 
